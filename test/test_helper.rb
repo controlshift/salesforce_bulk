@@ -7,7 +7,7 @@ require 'salesforce_bulk'
 class ActiveSupport::TestCase
 
   def self.test(name, &block)
-    define_method("test #{name.inspect}", &block)
+    define_method("test_#{name.to_s}", &block)
   end
 
   def api_url(client)

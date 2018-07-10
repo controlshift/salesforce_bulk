@@ -85,11 +85,11 @@ class TestBatch < ActiveSupport::TestCase
       {:Id__c => '23456', :Title__c => "A second test!", :IsPreview__c => true}
     ]
 
-    stub_request(:post, "#{api_url(@client)}job/#{job_id}/batch").with(:body => request, :headers => @headers).to_return(:body => response, :status => 200)
+    WebMock.stub_request(:post, "#{api_url(@client)}job/#{job_id}/batch").with(:body => request, :headers => @headers).to_return(:body => response, :status => 200)
 
     batch = @client.add_batch(job_id, data)
 
-    assert_requested :post, "#{api_url(@client)}job/#{job_id}/batch", :body => request, :headers => @headers, :times => 1
+    WebMock.assert_requested :post, "#{api_url(@client)}job/#{job_id}/batch", :body => request, :headers => @headers, :times => 1
 
     assert_equal batch.id, batch_id
     assert_equal batch.job_id, job_id
@@ -115,11 +115,11 @@ class TestBatch < ActiveSupport::TestCase
     response = fixture("batch_info_list_response.xml")
     job_id = "750E00000004N97IAE"
 
-    stub_request(:get, "#{api_url(@client)}job/#{job_id}/batch").with(:headers => @headersWithXml).to_return(:body => response, :status => 200)
+    WebMock.stub_request(:get, "#{api_url(@client)}job/#{job_id}/batch").with(:headers => @headersWithXml).to_return(:body => response, :status => 200)
 
     batches = @client.batch_info_list(job_id)
 
-    assert_requested :get, "#{api_url(@client)}job/#{job_id}/batch", :headers => @headersWithXml, :times => 1
+    WebMock.assert_requested :get, "#{api_url(@client)}job/#{job_id}/batch", :headers => @headersWithXml, :times => 1
 
     assert_kind_of Array, batches
     assert_kind_of SalesforceBulk::Batch, batches.first
@@ -155,11 +155,11 @@ class TestBatch < ActiveSupport::TestCase
     job_id = "750E00000004N97IAE"
     batch_id = "751E00000004ZRbIAM"
 
-    stub_request(:get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}").with(:headers => @headersWithXml).to_return(:body => response, :status => 200)
+    WebMock.stub_request(:get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}").with(:headers => @headersWithXml).to_return(:body => response, :status => 200)
 
     batch = @client.batch_info(job_id, batch_id)
 
-    assert_requested :get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}", :headers => @headersWithXml, :times => 1
+    WebMock.assert_requested :get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}", :headers => @headersWithXml, :times => 1
 
     assert_equal batch.id, batch_id
     assert_equal batch.job_id, job_id
@@ -182,11 +182,11 @@ class TestBatch < ActiveSupport::TestCase
     # results in CSV format despite requesting with XML content type.
     # Thus the content type header is ignored.
 
-    stub_request(:get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result").to_return(:body => response, :status => 200)
+    WebMock.stub_request(:get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result").to_return(:body => response, :status => 200)
 
     results = @client.batch_result(job_id, batch_id)
 
-    assert_requested :get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result", :times => 1
+    WebMock.assert_requested :get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result", :times => 1
 
     assert_kind_of SalesforceBulk::BatchResultCollection, results
     assert_kind_of Array, results
@@ -204,11 +204,11 @@ class TestBatch < ActiveSupport::TestCase
     job_id = "750E00000004NRa"
     batch_id = "751E00000004ZmK"
 
-    stub_request(:get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result").to_return(:body => response, :status => 200)
+    WebMock.stub_request(:get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result").to_return(:body => response, :status => 200)
 
     results = @client.batch_result(job_id, batch_id)
 
-    assert_requested :get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result", :times => 1
+    WebMock.assert_requested :get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result", :times => 1
 
     assert_kind_of SalesforceBulk::BatchResultCollection, results
     assert_kind_of Array, results
@@ -229,13 +229,13 @@ class TestBatch < ActiveSupport::TestCase
     batch_id = "751E00000004aEY"
     result_id = "752E0000000TNaq"
 
-    stub_request(:get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result").with(:headers => @headersWithXml).to_return(:body => response, :status => 200, :headers => @headersWithXml)
+    WebMock.stub_request(:get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result").with(:headers => @headersWithXml).to_return(:body => response, :status => 200, :headers => @headersWithXml)
 
     @client.expects(:query_result).with(job_id, batch_id, result_id).returns([])
 
     result = @client.batch_result(job_id, batch_id)
 
-    assert_requested :get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result", :headers => @headersWithXml, :times => 1
+    WebMock.assert_requested :get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result", :headers => @headersWithXml, :times => 1
     assert_kind_of SalesforceBulk::QueryResultCollection, result
     assert_equal result.job_id, job_id
     assert_equal result.batch_id, batch_id
@@ -248,11 +248,11 @@ class TestBatch < ActiveSupport::TestCase
     batch_id = "751E00000004aEY"
     result_id = "752E0000000TNaq"
 
-    stub_request(:get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result/#{result_id}").with(:headers => @headers).to_return(:body => response, :status => 200)
+    WebMock.stub_request(:get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result/#{result_id}").with(:headers => @headers).to_return(:body => response, :status => 200)
 
     result = @client.query_result(job_id, batch_id, result_id)
 
-    assert_requested :get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result/#{result_id}", :headers => @headers, :times => 1
+    WebMock.assert_requested :get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result/#{result_id}", :headers => @headers, :times => 1
     assert_kind_of Array, result
     assert result.length == 4
   end
@@ -262,7 +262,7 @@ class TestBatch < ActiveSupport::TestCase
     job_id = "750E00000004NnR"
     batch_id = "751E00000004aEY"
 
-    stub_request(:get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result").with(:headers => @headersWithXml).to_return(:body => response, :status => 400)
+    WebMock.stub_request(:get, "#{api_url(@client)}job/#{job_id}/batch/#{batch_id}/result").with(:headers => @headersWithXml).to_return(:body => response, :status => 400)
 
     assert_raise SalesforceBulk::SalesforceError do
       @client.batch_result(job_id, batch_id)
