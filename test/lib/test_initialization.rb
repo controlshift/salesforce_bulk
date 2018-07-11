@@ -50,11 +50,11 @@ class TestInitialization < ActiveSupport::TestCase
     request = fixture("login_request.xml")
     response = fixture("login_response.xml")
 
-    WebMock.stub_request(:post, "https://#{@client.login_host}/services/Soap/u/24.0").with(:body => request, :headers => headers).to_return(:body => response, :status => 200)
+    stub_request(:post, "https://#{@client.login_host}/services/Soap/u/24.0").with(:body => request, :headers => headers).to_return(:body => response, :status => 200)
 
     result = @client.authenticate()
 
-    WebMock.assert_requested :post, "https://#{@client.login_host}/services/Soap/u/24.0", :body => request, :headers => headers, :times => 1
+    assert_requested :post, "https://#{@client.login_host}/services/Soap/u/24.0", :body => request, :headers => headers, :times => 1
 
     assert_equal @client.instance_host, 'na9-api.salesforce.com'
     assert_equal @client.session_id, '00DE0000000YSKp!AQ4AQNQhDKLMORZx2NwZppuKfure.ChCmdI3S35PPxpNA5MHb3ZVxhYd5STM3euVJTI5.39s.jOBT.3mKdZ3BWFDdIrddS8O'
@@ -66,8 +66,7 @@ class TestInitialization < ActiveSupport::TestCase
     request = fixture("login_request.xml")
     response = fixture("login_response.xml")
 
-    WebMock.assert_requested :post, "https://#{@client.login_host}/services/Soap/u/24.0", :body => request, :headers => headers, :times => 2
-    WebMock.stub_request(:post, "https://#{@client.login_host}/services/Soap/u/24.0").with(:body => request, :headers => headers).to_return(:body => response, :status => 200)
+    stub_request(:post, "https://#{@client.login_host}/services/Soap/u/24.0").with(:body => request, :headers => headers).to_return(:body => response, :status => 200)
 
     result = @client.authenticate()
 
@@ -76,6 +75,8 @@ class TestInitialization < ActiveSupport::TestCase
     assert_equal @client, result
 
     result = @client.authenticate()
+
+    assert_requested :post, "https://#{@client.login_host}/services/Soap/u/24.0", :body => request, :headers => headers, :times => 2
   end
 
   test "parsing instance id from server url" do

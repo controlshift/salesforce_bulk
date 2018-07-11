@@ -3,3 +3,4 @@
 Gemfile.lock
 gemfiles/*.gemfile.lock
 pkg/*
+.byebug_history
