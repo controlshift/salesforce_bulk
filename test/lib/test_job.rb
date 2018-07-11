@@ -82,11 +82,11 @@ class TestJob < ActiveSupport::TestCase
     request = fixture("job_create_request.xml")
     response = fixture("job_create_response.xml")
 
-    WebMock.stub_request(:post, "#{api_url(@client)}job").with(:body => request, :headers => @headers).to_return(:body => response, :status => 200)
+    stub_request(:post, "#{api_url(@client)}job").with(:body => request, :headers => @headers).to_return(:body => response, :status => 200)
 
     job = @client.add_job(:upsert, :VideoEvent__c, :external_id_field_name => :Id__c)
 
-    WebMock.assert_requested :post, "#{api_url(@client)}job", :body => request, :headers => @headers, :times => 1
+    assert_requested :post, "#{api_url(@client)}job", :body => request, :headers => @headers, :times => 1
 
     assert_equal job.id, '750E00000004MzbIAE'
     assert_equal job.operation, 'upsert'
@@ -135,11 +135,11 @@ class TestJob < ActiveSupport::TestCase
     response = fixture("job_close_response.xml")
     job_id = "750E00000004MzbIAE"
 
-    WebMock.stub_request(:post, "#{api_url(@client)}job/#{job_id}").with(:body => request, :headers => @headers).to_return(:body => response, :status => 200)
+    stub_request(:post, "#{api_url(@client)}job/#{job_id}").with(:body => request, :headers => @headers).to_return(:body => response, :status => 200)
 
     job = @client.close_job(job_id)
 
-    WebMock.assert_requested :post, "#{api_url(@client)}job/#{job_id}", :body => request, :headers => @headers, :times => 1
+    assert_requested :post, "#{api_url(@client)}job/#{job_id}", :body => request, :headers => @headers, :times => 1
 
     assert_equal job.id, job_id
     assert_equal job.operation, 'upsert'
@@ -170,11 +170,11 @@ class TestJob < ActiveSupport::TestCase
     response = fixture("job_abort_response.xml")
     job_id = "750E00000004N1NIAU"
 
-    WebMock.stub_request(:post, "#{api_url(@client)}job/#{job_id}").with(:body => request, :headers => @headers).to_return(:body => response, :status => 200)
+    stub_request(:post, "#{api_url(@client)}job/#{job_id}").with(:body => request, :headers => @headers).to_return(:body => response, :status => 200)
 
     job = @client.abort_job(job_id)
 
-    WebMock.assert_requested :post, "#{api_url(@client)}job/#{job_id}", :body => request, :headers => @headers, :times => 1
+    assert_requested :post, "#{api_url(@client)}job/#{job_id}", :body => request, :headers => @headers, :times => 1
 
     assert_equal job.id, job_id
     assert_equal job.operation, 'upsert'
@@ -204,11 +204,11 @@ class TestJob < ActiveSupport::TestCase
     response = fixture("job_info_response.xml")
     job_id = "750E00000004N1mIAE"
 
-    WebMock.stub_request(:get, "#{api_url(@client)}job/#{job_id}").with(:body => '', :headers => @headers).to_return(:body => response, :status => 200)
+    stub_request(:get, "#{api_url(@client)}job/#{job_id}").with(:body => '', :headers => @headers).to_return(:body => response, :status => 200)
 
     job = @client.job_info(job_id)
 
-    WebMock.assert_requested :get, "#{api_url(@client)}job/#{job_id}", :body => '', :headers => @headers, :times => 1
+    assert_requested :get, "#{api_url(@client)}job/#{job_id}", :body => '', :headers => @headers, :times => 1
 
     assert_equal job.id, job_id
     assert_equal job.operation, 'upsert'
@@ -237,7 +237,7 @@ class TestJob < ActiveSupport::TestCase
   test "should raise SalesforceError on invalid job" do
     response = fixture("invalid_job_error.xml")
 
-    WebMock.stub_request(:post, "#{api_url(@client)}job").to_return(:body => response, :status => 500)
+    stub_request(:post, "#{api_url(@client)}job").to_return(:body => response, :status => 500)
 
     assert_raise SalesforceBulk::SalesforceError do
       job = @client.add_job(:upsert, :SomeNonExistingObject__c, :external_id_field_name => :Id__c)
